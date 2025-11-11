@@ -1,0 +1,7 @@
+/node_modules
+/cloudflare/kreative/node_modules
+/cloudflare/kreative/.vscode
+/cloudflare/kreative/.wrangler
+/sqlite.sql
+
+.env

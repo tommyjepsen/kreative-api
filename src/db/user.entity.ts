@@ -1,24 +1,23 @@
 import { randomUUID } from "crypto";
-import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
-import { sql } from "drizzle-orm";
+import { pgTable, text, boolean, timestamp, varchar } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { projects } from "./project.entity";
 
-export const users = sqliteTable("users", {
+export const users = pgTable("users", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => randomUUID()),
-  name: text("name", { length: 255 }).notNull(),
-  password: text("password", { length: 255 }).notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
+  password: varchar("password", { length: 255 }).notNull(),
   projectSelectedId: text("projectSelectedId").references(() => projects.id),
-  email: text("email", { length: 255 }).notNull().unique(),
-  stripeCustomerId: text("stripeCustomerId", { length: 255 }),
-  stripePaymentLink: text("stripePaymentLink", { length: 255 }),
-  testUser: integer("testUser", { mode: "boolean" }).notNull().default(true),
-  subscription: text("subscription", { length: 255 }).notNull().default("free"),
-  createdAt: integer("createdAt", { mode: "timestamp" })
+  email: varchar("email", { length: 255 }).notNull().unique(),
+  stripeCustomerId: varchar("stripeCustomerId", { length: 255 }),
+  stripePaymentLink: varchar("stripePaymentLink", { length: 255 }),
+  testUser: boolean("testUser").notNull().default(true),
+  subscription: varchar("subscription", { length: 255 }).notNull().default("free"),
+  createdAt: timestamp("createdAt")
     .notNull()
-    .default(sql`CURRENT_TIMESTAMP`),
+    .defaultNow(),
 });
 
 export const userRelations = relations(users, ({ one }) => ({

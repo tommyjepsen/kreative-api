@@ -36,17 +36,12 @@ router.post("/", authMiddleware, async (req: Request, res: Response) => {
 });
 
 // Get all workflows
-router.get("/", authMiddleware, async (req: Request, res: Response) => {
+router.get("/", async (req: Request, res: Response) => {
   try {
-    const user = (req as RequestWithUser).user;
+    // Try using select instead of query builder
+    const workflows = await db.select().from(schema.workflows);
 
-    const workflows = await db.query.workflows.findMany({
-      with: {
-        workflowNodes: true,
-      },
-      orderBy: (workflows, { desc }) => [desc(workflows.createdAt)],
-    });
-
+    console.log("Workflows result:", JSON.stringify(workflows, null, 2));
     res.json(workflows);
   } catch (error) {
     console.error("Error fetching workflows:", error);

@@ -1,27 +1,26 @@
 import { randomUUID } from "crypto";
-import { sql } from "drizzle-orm";
 import { relations } from "drizzle-orm";
-import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { pgTable, text, timestamp, varchar } from "drizzle-orm/pg-core";
 import { projects } from "./project.entity";
 
-export const companiesTable = sqliteTable("companies", {
+export const companiesTable = pgTable("companies", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => randomUUID()),
-  companyName: text("companyName", { length: 255 }).notNull(),
+  companyName: varchar("companyName", { length: 255 }).notNull(),
   companyDescription: text("companyDescription"),
   companyImageUrl: text("companyImageUrl"),
-  companyUrl: text("companyUrl", { length: 512 }).notNull().unique(),
-  createdAt: integer("createdAt", { mode: "timestamp" })
+  companyUrl: varchar("companyUrl", { length: 512 }).notNull().unique(),
+  createdAt: timestamp("createdAt")
     .notNull()
-    .default(sql`CURRENT_TIMESTAMP`),
+    .defaultNow(),
 });
 
 export const companiesRelations = relations(companiesTable, ({ many }) => ({
   projectLinks: many(projectToCompanyTable),
 }));
 
-export const projectToCompanyTable = sqliteTable("projectToCompany", {
+export const projectToCompanyTable = pgTable("projectToCompany", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => randomUUID()),
@@ -31,9 +30,9 @@ export const projectToCompanyTable = sqliteTable("projectToCompany", {
   companyId: text("companyId")
     .notNull()
     .references(() => companiesTable.id),
-  createdAt: integer("createdAt", { mode: "timestamp" })
+  createdAt: timestamp("createdAt")
     .notNull()
-    .default(sql`CURRENT_TIMESTAMP`),
+    .defaultNow(),
 });
 
 export const projectToCompanyRelations = relations(

@@ -1,7 +1,6 @@
 import { randomUUID } from "crypto";
-import { sql } from "drizzle-orm";
 import { relations } from "drizzle-orm";
-import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { pgTable, text, integer, timestamp, varchar, jsonb } from "drizzle-orm/pg-core";
 import { workflows } from "./workflow.entity";
 
 // Define node types enum
@@ -10,28 +9,29 @@ export const nodeTypes = [
   "generate-image",
   "remove-background",
   "upload-image",
+  "image-input",
 ] as const;
 
 export type NodeType = (typeof nodeTypes)[number];
 
-export const workflowNodes = sqliteTable("workflowNodes", {
+export const workflowNodes = pgTable("workflowNodes", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => randomUUID()),
   workflowId: text("workflowId")
     .notNull()
     .references(() => workflows.id),
-  title: text("title", { length: 255 }),
-  type: text("type", { length: 255, enum: nodeTypes })
+  title: varchar("title", { length: 255 }),
+  type: varchar("type", { length: 255 })
     .notNull()
     .default("prompt"),
-  data: text("data", { mode: "json" }),
+  data: jsonb("data"),
   inputWorkflowNodeId: text("inputWorkflowNodeId"),
-  output: text("output", { mode: "json" }),
+  output: jsonb("output"),
   position: integer("position").default(0),
-  createdAt: integer("createdAt", { mode: "timestamp" })
+  createdAt: timestamp("createdAt")
     .notNull()
-    .default(sql`CURRENT_TIMESTAMP`),
+    .defaultNow(),
 });
 
 //Relations

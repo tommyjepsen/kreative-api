@@ -1,16 +1,11 @@
 import "dotenv/config";
-import { drizzle } from "drizzle-orm/libsql/node";
-import * as schema from "./db/schema";
-const db = drizzle(process.env.DATABASE_URL!, { schema });
 
 //Start a Rest API on Express
 import express from "express";
 import cors from "cors";
 
-import projectRoutes from "./routes/project";
 import userRoutes from "./routes/user";
 import helmet from "helmet";
-import filesRoutes from "./routes/files";
 import workflowRoutes from "./routes/workflows";
 
 const app = express();
@@ -34,8 +29,6 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use("/files", filesRoutes);
-app.use("/projects", projectRoutes);
 app.use("/user", userRoutes);
 app.use("/workflows", workflowRoutes);
 

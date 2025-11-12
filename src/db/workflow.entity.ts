@@ -1,18 +1,17 @@
 import { randomUUID } from "crypto";
-import { sql } from "drizzle-orm";
 import { relations } from "drizzle-orm";
-import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { pgTable, text, timestamp, varchar } from "drizzle-orm/pg-core";
 import { workflowNodes } from "./workflownodes.entity";
 
-export const workflows = sqliteTable("workflows", {
+export const workflows = pgTable("workflows", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => randomUUID()),
-  cloudflareWorkflowId: text("cloudflareWorkflowId", { length: 255 }).notNull(),
-  title: text("title", { length: 255 }).notNull(),
-  createdAt: integer("createdAt", { mode: "timestamp" })
+  cloudflareWorkflowId: varchar("cloudflareWorkflowId", { length: 255 }),
+  title: varchar("title", { length: 255 }).notNull(),
+  createdAt: timestamp("createdAt")
     .notNull()
-    .default(sql`CURRENT_TIMESTAMP`),
+    .defaultNow(),
 });
 
 //Relations

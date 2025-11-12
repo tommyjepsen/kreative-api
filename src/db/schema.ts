@@ -9,9 +9,8 @@ export {
   projectToCompanyTable,
   projectToCompanyRelations,
 } from "./company.entity";
+
 export {
-  promptsTable,
-  promptsRelations,
-  promptRunStateTable,
-  promptRunStateRelations,
-} from "./prompt.entity";
+  workflowNodeRuns,
+  workflowNodeRunsRelations,
+} from "./workflownoderuns.entity";

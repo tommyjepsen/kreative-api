@@ -1,24 +1,23 @@
 import { randomUUID } from "crypto";
-import { sql } from "drizzle-orm";
 import { relations } from "drizzle-orm";
-import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { pgTable, text, timestamp, varchar } from "drizzle-orm/pg-core";
 import { users } from "./user.entity";
 import { projectToCompanyTable } from "./company.entity";
 
-export const projects: any = sqliteTable("projects", {
+export const projects: any = pgTable("projects", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => randomUUID()),
   userId: text("userId")
     .notNull()
     .references(() => users.id),
-  projectName: text("projectName", { length: 255 }).notNull(),
-  createdAt: integer("createdAt", { mode: "timestamp" })
+  projectName: varchar("projectName", { length: 255 }).notNull(),
+  createdAt: timestamp("createdAt")
     .notNull()
-    .default(sql`CURRENT_TIMESTAMP`),
+    .defaultNow(),
 });
 //Many users can have many projects
-export const userToProject = sqliteTable("userToProject", {
+export const userToProject = pgTable("userToProject", {
   userId: text("userId")
     .notNull()
     .references(() => users.id),

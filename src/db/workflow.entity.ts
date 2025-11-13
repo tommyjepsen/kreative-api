@@ -9,12 +9,10 @@ export const workflows = pgTable("workflows", {
     .$defaultFn(() => randomUUID()),
   cloudflareWorkflowId: varchar("cloudflareWorkflowId", { length: 255 }),
   title: varchar("title", { length: 255 }).notNull(),
-  createdAt: timestamp("createdAt")
-    .notNull()
-    .defaultNow(),
+  createdAt: timestamp("createdAt").notNull().defaultNow(),
 });
 
 //Relations
 export const workflowRelations = relations(workflows, ({ many }) => ({
-  workflowNodes: many(workflowNodes, { relationName: "workflowNodes" }),
+  workflowNodes: many(workflowNodes),
 }));

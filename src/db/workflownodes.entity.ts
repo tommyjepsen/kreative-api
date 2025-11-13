@@ -1,7 +1,15 @@
 import { randomUUID } from "crypto";
 import { relations } from "drizzle-orm";
-import { pgTable, text, integer, timestamp, varchar, jsonb } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  text,
+  integer,
+  timestamp,
+  varchar,
+  jsonb,
+} from "drizzle-orm/pg-core";
 import { workflows } from "./workflow.entity";
+import { workflowNodeRuns } from "./workflownoderuns.entity";
 
 // Define node types enum
 export const nodeTypes = [
@@ -10,6 +18,8 @@ export const nodeTypes = [
   "remove-background",
   "upload-image",
   "image-input",
+  "recraft-ai/recraft-vectorize",
+  "recraft-ai/recraft-creative-upscale",
 ] as const;
 
 export type NodeType = (typeof nodeTypes)[number];
@@ -22,22 +32,22 @@ export const workflowNodes = pgTable("workflowNodes", {
     .notNull()
     .references(() => workflows.id),
   title: varchar("title", { length: 255 }),
-  type: varchar("type", { length: 255 })
-    .notNull()
-    .default("prompt"),
+  type: varchar("type", { length: 255 }).notNull().default("prompt"),
   data: jsonb("data"),
   inputWorkflowNodeId: text("inputWorkflowNodeId"),
   output: jsonb("output"),
   position: integer("position").default(0),
-  createdAt: timestamp("createdAt")
-    .notNull()
-    .defaultNow(),
+  createdAt: timestamp("createdAt").notNull().defaultNow(),
 });
 
 //Relations
-export const workflowNodesRelations = relations(workflowNodes, ({ one }) => ({
-  workflow: one(workflows, {
-    fields: [workflowNodes.workflowId],
-    references: [workflows.id],
-  }),
-}));
+export const workflowNodesRelations = relations(
+  workflowNodes,
+  ({ one, many }) => ({
+    workflow: one(workflows, {
+      fields: [workflowNodes.workflowId],
+      references: [workflows.id],
+    }),
+    workflowNodeRuns: many(workflowNodeRuns),
+  })
+);

@@ -4,7 +4,7 @@ import express, { Request, Response } from "express";
 import { eq, and } from "drizzle-orm";
 import * as schema from "../db/schema";
 import { authMiddleware, RequestWithUser } from "../middleware";
-import { db } from "../db";
+import db from "../db";
 
 const router = express.Router();
 
@@ -39,7 +39,12 @@ router.post("/", authMiddleware, async (req: Request, res: Response) => {
 router.get("/", async (req: Request, res: Response) => {
   try {
     // Try using select instead of query builder
-    const workflows = await db.select().from(schema.workflows);
+    const workflows = await db.query.workflows.findMany({
+      with: {
+        workflowNodes: true,
+      },
+      orderBy: (workflows, { asc }) => [asc(workflows.createdAt)],
+    });
 
     console.log("Workflows result:", JSON.stringify(workflows, null, 2));
     res.json(workflows);

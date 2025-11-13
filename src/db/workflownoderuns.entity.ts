@@ -14,13 +14,11 @@ export const workflowNodeRuns = pgTable("workflowNodeRuns", {
   workflowId: text("workflowId")
     .notNull()
     .references(() => workflows.id),
-  runId: varchar("runId", { length: 255 }).notNull(),
   status: varchar("status", { length: 255 }).notNull().default("pending"),
   output: jsonb("output"),
-  error: varchar("error", { length: 255 }),
-  createdAt: timestamp("createdAt")
-    .notNull()
-    .defaultNow(),
+  error: jsonb("error"),
+  finishedAt: timestamp("finishedAt"),
+  createdAt: timestamp("createdAt").notNull().defaultNow(),
 });
 
 //Relations

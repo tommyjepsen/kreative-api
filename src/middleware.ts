@@ -2,7 +2,7 @@ import "dotenv/config";
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { users } from "./db/user.entity";
-import { db } from "./db";
+import db from "./db";
 import { eq } from "drizzle-orm";
 
 export type RequestWithUser = Request & {

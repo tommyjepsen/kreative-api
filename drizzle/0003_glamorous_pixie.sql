@@ -1,0 +1,1 @@
+ALTER TABLE "workflowNodeRuns" DROP COLUMN "error";

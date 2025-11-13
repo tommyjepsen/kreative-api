@@ -3,7 +3,7 @@ import express, { Request, Response } from "express";
 import { authMiddleware, RequestWithUser } from "../middleware";
 import { eq } from "drizzle-orm";
 import { users } from "../db/user.entity";
-import { db } from "../db";
+import db from "../db";
 
 const router = express.Router();
 

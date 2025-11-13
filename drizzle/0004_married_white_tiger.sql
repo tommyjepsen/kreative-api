@@ -1,0 +1,1 @@
+ALTER TABLE "workflowNodeRuns" ADD COLUMN "error" jsonb;
